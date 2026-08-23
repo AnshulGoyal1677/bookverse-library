@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 import BookGrid from '../components/BookGrid';
 import SearchBar from '../components/SearchBar';
+import CategoryFilter from '../components/CategoryFilter';
 import { books } from '../data/books';
+
+const categories = ['All', ...new Set(books.map((book) => book.category))];
 
 function Books() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   const filteredBooks = books.filter((book) => {
     const term=searchTerm.toLowerCase();
-    const titleMatch = book.title.toLowerCase().includes(term);
-    const authorMatch = book.author.toLowerCase().includes(term);
-    return titleMatch || authorMatch;
+    const matchesSearch =
+      book.title.toLowerCase().includes(term) || book.author.toLowerCase().includes(term);
+    const matchesCategory =
+      selectedCategory === 'All' || book.category === selectedCategory;    
+    
+    return matchesSearch && matchesCategory;
   });
 
   return (
@@ -21,6 +28,12 @@ function Books() {
       </header>
 
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+      <CategoryFilter
+        categories={categories}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
 
       <main style={styles.main}>
         <BookGrid books={filteredBooks} />
