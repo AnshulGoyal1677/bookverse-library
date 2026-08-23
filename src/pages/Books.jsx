@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import BookGrid from '../components/BookGrid';
+import SearchBar from '../components/SearchBar';
 import { books } from '../data/books';
 
 function Books() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredBooks = books.filter((book) => {
+    const term=searchTerm.toLowerCase();
+    const titleMatch = book.title.toLowerCase().includes(term);
+    const authorMatch = book.author.toLowerCase().includes(term);
+    return titleMatch || authorMatch;
+  });
+
   return (
     <div style={styles.container}>
       <header style={styles.header}>
@@ -10,8 +20,10 @@ function Books() {
         <p style={styles.subtitle}>Discover your next favorite read from our curated catalogue.</p>
       </header>
 
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
       <main style={styles.main}>
-        <BookGrid books={books} />
+        <BookGrid books={filteredBooks} />
       </main>
     </div>
   );
