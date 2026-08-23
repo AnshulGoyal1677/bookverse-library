@@ -3,6 +3,7 @@ import BookGrid from '../components/BookGrid';
 import SearchBar from '../components/SearchBar';
 import CategoryFilter from '../components/CategoryFilter';
 import { books } from '../data/books';
+import './Books.css';
 
 const categories = ['All', ...new Set(books.map((book) => book.category))];
 
@@ -21,10 +22,12 @@ function Books() {
   });
 
   return (
-    <div style={styles.container}>
-      <header style={styles.header}>
-        <h1 style={styles.title}>Explore Our Book Collection</h1>
-        <p style={styles.subtitle}>Discover your next favorite read from our curated catalogue.</p>
+    <div className="books-container">
+      <header className="books-header">
+        <h1 className="books-title">Explore Our Book Collection</h1>
+        <p className="books-subtitle">
+          Discover your next favorite read from our curated catalogue.
+        </p>
       </header>
 
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -35,37 +38,11 @@ function Books() {
         setSelectedCategory={setSelectedCategory}
       />
 
-      <main style={styles.main}>
+      <main>
         <BookGrid books={filteredBooks} />
       </main>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '32px 16px',
-    minHeight: '80vh'
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '32px'
-  },
-  title: {
-    fontSize: '32px',
-    fontWeight: 'bold',
-    marginBottom: '8px',
-    color: '#1a202c'
-  },
-  subtitle: {
-    fontSize: '16px',
-    color: '#718096'
-  },
-  main: {
-    marginTop: '16px'
-  }
-};
 
 export default Books;
