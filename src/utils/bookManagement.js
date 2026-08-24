@@ -1,39 +1,42 @@
-const CUSTOM_BOOKS_KEY = "bookverse_custom_books";
+const KEY = "bookverse_custom_books";
 
-// 1. Retrieve all custom books added by the user
+// 1. Get all custom books from localStorage
 export function getCustomBooks() {
-  const saved = localStorage.getItem(CUSTOM_BOOKS_KEY);
-  if (!saved) {
-    return [];
+  const data = localStorage.getItem(KEY);
+  if (data) {
+    return JSON.parse(data);
   }
-  try {
-    return JSON.parse(saved);
-  } catch (error) {
-    console.error("Error reading custom books:", error);
-    return [];
-  }
+  return [];
 }
 
-// 2. Add a new book to the user's custom collection
+// 2. Add a new custom book to localStorage
 export function addCustomBook(book) {
-  const books = getCustomBooks();
-  
-  // Assign a unique timestamp ID if an ID is not provided
+  const currentBooks = getCustomBooks();
+
+  // Create a new book object with a unique timestamp ID
   const newBook = {
-    ...book,
-    id: book.id || Date.now(),
+    id: Date.now(),
+    title: book.title,
+    author: book.author,
+    category: book.category,
+    description: book.description,
     isCustom: true
   };
 
-  const updated = [newBook, ...books];
-  localStorage.setItem(CUSTOM_BOOKS_KEY, JSON.stringify(updated));
+  // Add new book to the array and save
+  const updatedBooks = [newBook, ...currentBooks];
+  localStorage.setItem(KEY, JSON.stringify(updatedBooks));
+
   return newBook;
 }
 
-// 3. Remove a custom book by ID
+// 3. Delete a custom book by its ID
 export function deleteCustomBook(bookId) {
-  const books = getCustomBooks();
-  const updated = books.filter((book) => book.id !== Number(bookId));
-  localStorage.setItem(CUSTOM_BOOKS_KEY, JSON.stringify(updated));
-  return updated;
+  const currentBooks = getCustomBooks();
+
+  // Filter out the book with matching ID
+  const updatedBooks = currentBooks.filter((item) => item.id !== Number(bookId));
+  localStorage.setItem(KEY, JSON.stringify(updatedBooks));
+
+  return updatedBooks;
 }
