@@ -1,42 +1,42 @@
-const WISHLIST_STORAGE_KEY = "bookverse_wishlist";
+const KEY = "bookverse_wishlist";
 
-// 1. Get all wishlist books from localStorage
+// 1. Get all saved wishlist books from localStorage
 export function getWishlist() {
-  const saved = localStorage.getItem(WISHLIST_STORAGE_KEY);
-  if (!saved) {
-    return [];
+  const data = localStorage.getItem(KEY);
+  if (data) {
+    return JSON.parse(data);
   }
-  try {
-    return JSON.parse(saved);
-  } catch (error) {
-    console.error("Error reading wishlist from localStorage:", error);
-    return [];
-  }
+  return [];
 }
 
-// 2. Check if a specific book is already in the wishlist (by ID)
+// 2. Check if a book ID is already inside the wishlist
 export function isInWishlist(bookId) {
   const list = getWishlist();
-  return list.some((book) => book.id === Number(bookId));
+  return list.some((item) => item.id === Number(bookId));
 }
 
-// 3. Add a book to the wishlist
+// 3. Add a new book to the wishlist
 export function addToWishlist(book) {
   const list = getWishlist();
-  const exists = list.some((item) => item.id === book.id);
   
-  if (!exists) {
-    const updated = [...list, book];
-    localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(updated));
-    return updated;
+  // Check if book already exists to avoid duplicates
+  const alreadyAdded = list.some((item) => item.id === book.id);
+  if (!alreadyAdded) {
+    const updatedList = [book, ...list];
+    localStorage.setItem(KEY, JSON.stringify(updatedList));
+    return updatedList;
   }
+  
   return list;
 }
 
-// 4. Remove a book from the wishlist (by ID)
+// 4. Remove a book from the wishlist by ID
 export function removeFromWishlist(bookId) {
   const list = getWishlist();
-  const updated = list.filter((item) => item.id !== Number(bookId));
-  localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(updated));
-  return updated;
+  
+  // Keep all books except the one with the matching ID
+  const updatedList = list.filter((item) => item.id !== Number(bookId));
+  localStorage.setItem(KEY, JSON.stringify(updatedList));
+  
+  return updatedList;
 }
