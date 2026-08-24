@@ -4,51 +4,56 @@ import { getWishlist } from "../utils/wishlist";
 import WishlistButton from "../components/WishlistButton";
 
 export default function Wishlist() {
-  // 1. Local state to store the wishlist array
-  const [wishlistItems, setWishlistItems] = useState([]);
+  const [items, setItems] = useState([]);
 
-  // 2. Load saved books from localStorage when page loads
+  // Load wishlist items on mount
   useEffect(() => {
-    const savedBooks = getWishlist();
-    setWishlistItems(savedBooks);
+    setItems(getWishlist());
   }, []);
 
-  // 3. Callback function: updates UI when a book is removed
-  const handleWishlistToggle = (inWishlist, bookId) => {
+  // Remove item from state when toggled off
+  const handleRemove = (inWishlist, id) => {
     if (!inWishlist) {
-      // Remove the item from state so it disappears immediately
-      const updatedList = wishlistItems.filter((book) => book.id !== bookId);
-      setWishlistItems(updatedList);
+      setItems(items.filter((book) => book.id !== id));
     }
   };
 
   return (
-    <div style={{ maxWidth: "900px", margin: "30px auto", padding: "0 20px" }}>
-      <h1>My Wishlist</h1>
-      <p style={{ color: "#6b7280" }}>Books you have saved to read later.</p>
+    <div style={{ maxWidth: "800px", margin: "20px auto", padding: "0 16px" }}>
+      <h2>My Wishlist</h2>
+      <p style={{ color: "#666" }}>Books saved for later reading.</p>
 
-      {/* 4. Conditional Rendering: Empty State vs Books List */}
-      {wishlistItems.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "40px", border: "1px dashed #ccc", borderRadius: "8px" }}>
-          <p>Your wishlist is currently empty.</p>
-          <Link to="/">Explore Catalogue</Link>
+      {items.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "30px", border: "1px dashed #ccc" }}>
+          <p>Your wishlist is empty.</p>
+          <Link to="/">Browse Books</Link>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px", marginTop: "20px" }}>
-          {wishlistItems.map((book) => (
-            <div key={book.id} style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "16px", backgroundColor: "#fff" }}>
-              <span style={{ fontSize: "12px", color: "#0369a1", fontWeight: "bold" }}>
-                {book.category}
-              </span>
-              <h3 style={{ margin: "10px 0 5px" }}>{book.title}</h3>
-              <p style={{ margin: "0 0 15px", color: "#555" }}>by {book.author}</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
+          {items.map((book) => (
+            <div
+              key={book.id}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                border: "1px solid #ddd",
+                padding: "12px 16px",
+                borderRadius: "6px"
+              }}
+            >
+              <div>
+                <h4 style={{ margin: "0 0 4px" }}>{book.title}</h4>
+                <p style={{ margin: 0, fontSize: "14px", color: "#555" }}>
+                  {book.author} — <em>{book.category}</em>
+                </p>
+              </div>
 
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #eee", paddingTop: "10px" }}>
-                <Link to={`/books/${book.id}`} style={{ color: "#2563eb", textDecoration: "none" }}>
-                  View Details →
+              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                <Link to={`/books/${book.id}`} style={{ fontSize: "14px", color: "#2563eb" }}>
+                  Details
                 </Link>
-                {/* Reusable toggle button */}
-                <WishlistButton book={book} onToggle={handleWishlistToggle} />
+                <WishlistButton book={book} onToggle={handleRemove} />
               </div>
             </div>
           ))}
