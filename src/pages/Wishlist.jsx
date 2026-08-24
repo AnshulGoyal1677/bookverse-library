@@ -4,128 +4,50 @@ import { getWishlist } from "../utils/wishlist";
 import WishlistButton from "../components/WishlistButton";
 
 export default function Wishlist() {
+  // 1. Local state to store the wishlist array
   const [wishlistItems, setWishlistItems] = useState([]);
 
-  // Load wishlist items on component mount
+  // 2. Load saved books from localStorage when page loads
   useEffect(() => {
-    setWishlistItems(getWishlist());
+    const savedBooks = getWishlist();
+    setWishlistItems(savedBooks);
   }, []);
 
-  // Callback to update state when an item is removed via WishlistButton
+  // 3. Callback function: updates UI when a book is removed
   const handleWishlistToggle = (inWishlist, bookId) => {
     if (!inWishlist) {
-      setWishlistItems((prevItems) =>
-        prevItems.filter((book) => book.id !== bookId)
-      );
+      // Remove the item from state so it disappears immediately
+      const updatedList = wishlistItems.filter((book) => book.id !== bookId);
+      setWishlistItems(updatedList);
     }
   };
 
   return (
-    <div style={{ maxWidth: "1000px", margin: "40px auto", padding: "0 20px" }}>
-      <div style={{ marginBottom: "28px" }}>
-        <h1 style={{ fontSize: "28px", color: "#111827", margin: "0 0 8px" }}>
-          My Wishlist
-        </h1>
-        <p style={{ color: "#6b7280", margin: 0 }}>
-          Books you have saved for later reading.
-        </p>
-      </div>
+    <div style={{ maxWidth: "900px", margin: "30px auto", padding: "0 20px" }}>
+      <h1>My Wishlist</h1>
+      <p style={{ color: "#6b7280" }}>Books you have saved to read later.</p>
 
-      {/* Empty State */}
+      {/* 4. Conditional Rendering: Empty State vs Books List */}
       {wishlistItems.length === 0 ? (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "48px 20px",
-            backgroundColor: "#f9fafb",
-            borderRadius: "12px",
-            border: "1px dashed #d1d5db"
-          }}
-        >
-          <p style={{ fontSize: "18px", color: "#4b5563", marginBottom: "16px" }}>
-            Your wishlist is currently empty.
-          </p>
-          <Link
-            to="/"
-            style={{
-              display: "inline-block",
-              padding: "10px 20px",
-              backgroundColor: "#2563eb",
-              color: "#ffffff",
-              textDecoration: "none",
-              borderRadius: "6px",
-              fontWeight: "500"
-            }}
-          >
-            Explore Catalogue
-          </Link>
+        <div style={{ textAlign: "center", padding: "40px", border: "1px dashed #ccc", borderRadius: "8px" }}>
+          <p>Your wishlist is currently empty.</p>
+          <Link to="/">Explore Catalogue</Link>
         </div>
       ) : (
-        /* Wishlist Grid */
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: "24px"
-          }}
-        >
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px", marginTop: "20px" }}>
           {wishlistItems.map((book) => (
-            <div
-              key={book.id}
-              style={{
-                backgroundColor: "#ffffff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "10px",
-                padding: "20px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
-              }}
-            >
-              <div>
-                <span
-                  style={{
-                    backgroundColor: "#e0f2fe",
-                    color: "#0369a1",
-                    padding: "3px 8px",
-                    borderRadius: "9999px",
-                    fontSize: "11px",
-                    fontWeight: "600"
-                  }}
-                >
-                  {book.category}
-                </span>
+            <div key={book.id} style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "16px", backgroundColor: "#fff" }}>
+              <span style={{ fontSize: "12px", color: "#0369a1", fontWeight: "bold" }}>
+                {book.category}
+              </span>
+              <h3 style={{ margin: "10px 0 5px" }}>{book.title}</h3>
+              <p style={{ margin: "0 0 15px", color: "#555" }}>by {book.author}</p>
 
-                <h3 style={{ margin: "12px 0 6px", fontSize: "18px", color: "#1f2937" }}>
-                  {book.title}
-                </h3>
-                <p style={{ color: "#6b7280", fontSize: "14px", margin: "0 0 12px" }}>
-                  by {book.author}
-                </p>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginTop: "16px",
-                  paddingTop: "12px",
-                  borderTop: "1px solid #f3f4f6"
-                }}
-              >
-                <Link
-                  to={`/books/${book.id}`}
-                  style={{
-                    color: "#2563eb",
-                    textDecoration: "none",
-                    fontSize: "14px",
-                    fontWeight: "500"
-                  }}
-                >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #eee", paddingTop: "10px" }}>
+                <Link to={`/books/${book.id}`} style={{ color: "#2563eb", textDecoration: "none" }}>
                   View Details →
                 </Link>
+                {/* Reusable toggle button */}
                 <WishlistButton book={book} onToggle={handleWishlistToggle} />
               </div>
             </div>
