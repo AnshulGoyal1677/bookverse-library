@@ -3,127 +3,61 @@ import { booksData } from "../data/booksData";
 import WishlistButton from "../components/WishlistButton";
 
 export default function BookDetails() {
+  // 1. Get the dynamic book id from the URL parameter (/books/:id)
   const { id } = useParams();
 
-  // Find the specific book by matching ID from URL
+  // 2. Find the book in booksData matching this ID
   const book = booksData.find((item) => item.id === Number(id));
 
-  // If the book is not found (e.g., invalid ID entered in URL)
+  // 3. Render fallback if ID is not found in booksData
   if (!book) {
     return (
-      <div style={{ padding: "40px 20px", textAlign: "center" }}>
+      <div style={{ textAlign: "center", padding: "40px 20px" }}>
         <h2>Book Not Found</h2>
-        <p style={{ color: "#6b7280", margin: "12px 0 24px" }}>
-          We couldn't find the book you were looking for.
-        </p>
-        <Link
-          to="/"
-          style={{
-            padding: "8px 16px",
-            backgroundColor: "#2563eb",
-            color: "#ffffff",
-            textDecoration: "none",
-            borderRadius: "6px"
-          }}
-        >
-          Return Home
-        </Link>
+        <p style={{ color: "#6b7280" }}>No book found with ID: {id}</p>
+        <Link to="/" style={{ color: "#2563eb" }}>← Return to Home</Link>
       </div>
     );
   }
 
+  // 4. Render details using the exact properties from booksData
   return (
-    <div style={{ maxWidth: "900px", margin: "40px auto", padding: "0 20px" }}>
-      <Link
-        to="/"
-        style={{
-          display: "inline-block",
-          marginBottom: "24px",
-          color: "#4b5563",
-          textDecoration: "none",
-          fontWeight: "500"
-        }}
-      >
+    <div style={{ maxWidth: "800px", margin: "30px auto", padding: "0 20px" }}>
+      <Link to="/" style={{ textDecoration: "none", color: "#4b5563" }}>
         ← Back to Catalogue
       </Link>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 2fr",
-          gap: "32px",
-          backgroundColor: "#ffffff",
-          padding: "32px",
-          borderRadius: "12px",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
-        }}
-      >
-        {/* Book Cover Placeholder / Graphic */}
-        <div
-          style={{
-            height: "320px",
-            backgroundColor: "#1e293b",
-            borderRadius: "8px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            textAlign: "center",
-            color: "#ffffff"
-          }}
-        >
-          <span
-            style={{
-              fontSize: "12px",
-              textTransform: "uppercase",
-              letterSpacing: "1px",
-              opacity: 0.7
-            }}
-          >
-            {book.category}
-          </span>
-          <h3 style={{ margin: "16px 0 8px", fontSize: "18px" }}>{book.title}</h3>
-          <p style={{ fontSize: "14px", opacity: 0.8 }}>by {book.author}</p>
+      <div style={{ 
+        border: "1px solid #e5e7eb", 
+        borderRadius: "8px", 
+        padding: "24px", 
+        marginTop: "16px",
+        backgroundColor: "#ffffff"
+      }}>
+        <span style={{ 
+          backgroundColor: "#e0f2fe", 
+          color: "#0369a1", 
+          padding: "4px 8px", 
+          borderRadius: "4px", 
+          fontSize: "12px",
+          fontWeight: "bold"
+        }}>
+          {book.category}
+        </span>
+
+        <h1 style={{ margin: "12px 0 6px", fontSize: "26px" }}>{book.title}</h1>
+        <p style={{ margin: "0 0 16px", color: "#4b5563" }}>by <strong>{book.author}</strong></p>
+
+        <p style={{ fontSize: "14px", color: "#9ca3af" }}>Book ID: #{book.id}</p>
+
+        <div style={{ margin: "20px 0", borderTop: "1px solid #f3f4f6", paddingTop: "16px" }}>
+          <h3 style={{ fontSize: "16px", marginBottom: "8px" }}>Synopsis</h3>
+          <p style={{ color: "#374151", lineHeight: "1.5" }}>{book.description}</p>
         </div>
 
-        {/* Book Info & Actions */}
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
-              <span
-                style={{
-                  backgroundColor: "#e0f2fe",
-                  color: "#0369a1",
-                  padding: "4px 10px",
-                  borderRadius: "9999px",
-                  fontSize: "12px",
-                  fontWeight: "600"
-                }}
-              >
-                {book.category}
-              </span>
-              <span style={{ color: "#9ca3af", fontSize: "14px" }}>Book ID: #{book.id}</span>
-            </div>
-
-            <h1 style={{ fontSize: "28px", color: "#111827", margin: "8px 0" }}>
-              {book.title}
-            </h1>
-            <p style={{ fontSize: "16px", color: "#4b5563", marginBottom: "20px" }}>
-              Written by <strong>{book.author}</strong>
-            </p>
-
-            <h3 style={{ fontSize: "16px", color: "#374151", marginBottom: "8px" }}>
-              Synopsis
-            </h3>
-            <p style={{ color: "#4b5563", lineHeight: "1.6", fontSize: "15px" }}>
-              {book.description}
-            </p>
-          </div>
-
-          <div style={{ marginTop: "24px", paddingTop: "20px", borderTop: "1px solid #e5e7eb" }}>
-            <WishlistButton book={book} />
-          </div>
+        {/* WishlistButton component integration */}
+        <div style={{ marginTop: "20px" }}>
+          <WishlistButton book={book} />
         </div>
       </div>
     </div>
