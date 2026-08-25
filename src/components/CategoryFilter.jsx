@@ -1,4 +1,3 @@
-import React from 'react';
 
 function CategoryFilter({ categories, selectedCategory, setSelectedCategory }) {
   return (

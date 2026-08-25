@@ -1,0 +1,109 @@
+.navbar-header {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-navy);
+  letter-spacing: -0.5px;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--primary-navy);
+  border-bottom: 2px solid var(--secondary-amber);
+}
+
+.btn-login {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--primary-navy);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: var(--primary-navy);
+  transition: all 0.2s ease;
+}
+
+.btn-login:hover {
+  background-color: var(--primary-navy);
+  color: #ffffff;
+}.navbar-header {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-navy);
+  letter-spacing: -0.5px;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--primary-navy);
+  border-bottom: 2px solid var(--secondary-amber);
+}
+
+.btn-login {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--primary-navy);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: var(--primary-navy);
+  transition: all 0.2s ease;
+}
+
+.btn-login:hover {
+  background-color: var(--primary-navy);
+  color: #ffffff;
+}

@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import './Auth.css';
 
-function Signup({ onSwitch }) {
+function Signup() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,25 +28,21 @@ function Signup({ onSwitch }) {
     e.preventDefault();
 
     if (!formData.name.trim() || !formData.email.trim() || !formData.password || !formData.confirmPassword) {
-      alert('Error: Please fill in all fields.');
       setError('Please fill in all fields.');
       return;
     }
 
     if (!validateEmail(formData.email)) {
-      alert('Error: Please enter a valid email format (e.g. name@domain.com).');
-      setError('Please enter a valid email address.');
+      setError('Please enter a valid email address (e.g. name@domain.com).');
       return;
     }
 
     if (formData.password.length < 6) {
-      alert('Error: Password must be at least 6 characters long.');
       setError('Password must be at least 6 characters long.');
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Error: Passwords do not match.');
       setError('Passwords do not match.');
       return;
     }
@@ -51,7 +51,6 @@ function Signup({ onSwitch }) {
     const userExists = existingUsers.some((u) => u.email.toLowerCase() === formData.email.toLowerCase().trim());
 
     if (userExists) {
-      alert('Error: An account with this email already exists.');
       setError('An account with this email already exists.');
       return;
     }
@@ -65,15 +64,14 @@ function Signup({ onSwitch }) {
     existingUsers.push(newUser);
     localStorage.setItem('bookverse_users', JSON.stringify(existingUsers));
 
-    alert('Account created successfully! Click OK to go to Login.');
-    onSwitch('login');
+    navigate('/login');
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
         <h2>Join BookVerse</h2>
-        <p className="auth-subtitle">Create your account to start borrowing books</p>
+        <p className="auth-subtitle">Create your account to start exploring</p>
 
         {error && <div className="auth-alert error-alert">{error}</div>}
 
@@ -122,22 +120,13 @@ function Signup({ onSwitch }) {
             />
           </div>
 
-          <button type="submit" className="auth-btn">
+          <button type="submit" className="btn btn-primary">
             Create Account
           </button>
         </form>
 
         <p className="auth-switch">
-          Already have an account?{' '}
-          <a
-            href="#login"
-            onClick={(e) => {
-              e.preventDefault();
-              onSwitch('login');
-            }}
-          >
-            Log In
-          </a>
+          Already have an account? <Link to="/login">Log In</Link>
         </p>
       </div>
     </div>

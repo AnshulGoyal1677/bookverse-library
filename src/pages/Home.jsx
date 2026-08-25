@@ -1,74 +1,91 @@
-{/* Genre Exploration (Bento-style Layout) */}
-            <section className="px-6 md:px-16 py-12 max-w-[1280px] mx-auto">
-                <div className="mb-8 text-center md:text-left">
-                    <h2 className="font-serif text-3xl font-semibold text-[#030612]">Explore by Category</h2>
-                    <p className="text-base text-[#45464c] mt-1">Delve into specific realms of knowledge and imagination.</p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[200px]">
-                    {/* Large Card */}
-                    <a className="md:col-span-2 md:row-span-2 rounded-2xl overflow-hidden relative group shadow-sm bg-[#1a1f2c] flex flex-col justify-end p-6" href="#">
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#030612]/80 via-[#030612]/20 to-transparent"></div>
-                        <div className="relative z-10">
-                            <h3 className="font-serif text-2xl text-white mb-1">Fiction</h3>
-                            <p className="text-sm text-white/80">Novels, short stories, and tales of imagination.</p>
-                        </div>
-                    </a>
-                    {/* Standard Card 1 */}
-                    <a className="md:col-span-1 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-sm bg-[#7d562d] flex flex-col justify-end p-4" href="#">
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#030612]/70 to-transparent"></div>
-                        <div className="relative z-10">
-                            <h3 className="font-sans text-xl font-semibold text-white mb-1">Non-Fiction</h3>
-                        </div>
-                    </a>
-                    {/* Standard Card 2 */}
-                    <a className="md:col-span-1 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-sm bg-[#45464c] flex flex-col justify-end p-4" href="#">
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#030612]/70 to-transparent"></div>
-                        <div className="relative z-10">
-                            <h3 className="font-sans text-xl font-semibold text-white mb-1">Poetry</h3>
-                        </div>
-                    </a>
-                    {/* Wide Card */}
-                    <a className="md:col-span-2 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-sm bg-[#eceef2] flex items-center p-6" href="#">
-                        <div className="relative z-10">
-                            <h3 className="font-serif text-2xl text-[#030612] mb-1">History</h3>
-                            <p className="text-sm text-[#45464c]">Chronicles of the past, biographies, and historical events.</p>
-                        </div>
-                    </a>
-                </div>
-            </section>
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { books } from '../data/books';
+import BookCard from '../components/BookCard';
+import './Home.css';
 
-            {/* Genre Exploration (Bento-style Layout) */}
-            <section className="px-6 md:px-16 py-12 max-w-[1280px] mx-auto">
-                <div className="mb-8 text-center md:text-left">
-                    <h2 className="font-serif text-3xl font-semibold text-[#030612]">Explore by Category</h2>
-                    <p className="text-base text-[#45464c] mt-1">Delve into specific realms of knowledge and imagination.</p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[200px]">
-                    {/* Large Card */}
-                    <a className="md:col-span-2 md:row-span-2 rounded-2xl overflow-hidden relative group shadow-sm bg-[#1a1f2c] flex flex-col justify-end p-6" href="#">
-                        <div className="relative z-10">
-                            <h3 className="font-serif text-2xl text-white mb-1">Fiction</h3>
-                            <p className="text-sm text-white/80">Novels, short stories, and tales of imagination.</p>
-                        </div>
-                    </a>
-                    {/* Standard Card 1 */}
-                    <a className="md:col-span-1 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-sm bg-[#7d562d] flex flex-col justify-end p-4" href="#">
-                        <div className="relative z-10">
-                            <h3 className="font-sans text-xl font-semibold text-white mb-1">Non-Fiction</h3>
-                        </div>
-                    </a>
-                    {/* Standard Card 2 */}
-                    <a className="md:col-span-1 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-sm bg-[#45464c] flex flex-col justify-end p-4" href="#">
-                        <div className="relative z-10">
-                            <h3 className="font-sans text-xl font-semibold text-white mb-1">Poetry</h3>
-                        </div>
-                    </a>
-                    {/* Wide Card */}
-                    <a className="md:col-span-2 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-sm bg-[#eceef2] flex items-center p-6" href="#">
-                        <div className="relative z-10">
-                            <h3 className="font-serif text-2xl text-[#030612] mb-1">History</h3>
-                            <p className="text-sm text-[#45464c]">Chronicles of the past, biographies, and historical events.</p>
-                        </div>
-                    </a>
-                </div>
-            </section>
+const categories = ['Fiction', 'History', 'Self-Help', 'Technology', 'Fantasy'];
+
+function Home() {
+  const navigate = useNavigate();
+  const [heroSearch, setHeroSearch] = useState('');
+
+  const newArrivals = books.slice(0, 4);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    navigate(`/catalogue?search=${encodeURIComponent(heroSearch)}`);
+  };
+
+  const handleCategoryClick = (category) => {
+    navigate(`/catalogue?category=${encodeURIComponent(category)}`);
+  };
+
+  return (
+    <div>
+      {/* Hero Section */}
+      <section className="hero container">
+        <h1>Your journey through a thousand verses begins here.</h1>
+        <p>
+          Discover a curated sanctuary of literature. Search for your next great read
+          in our digital library.
+        </p>
+
+        <form className="hero-search" onSubmit={handleSearchSubmit}>
+          <input
+            type="text"
+            placeholder="Search by title, author, or keyword..."
+            value={heroSearch}
+            onChange={(e) => setHeroSearch(e.target.value)}
+          />
+          <button type="submit" className="btn btn-primary">
+            Search
+          </button>
+        </form>
+      </section>
+
+      {/* New Arrivals */}
+      <section className="container home-section">
+        <div className="section-heading">
+          <div>
+            <h2>New Arrivals</h2>
+            <p>The latest additions to our curated shelves.</p>
+          </div>
+          <Link to="/catalogue" className="view-all-link">
+            View all →
+          </Link>
+        </div>
+
+        <div className="book-grid">
+          {newArrivals.map((book) => (
+            <BookCard key={book.id} book={book} />
+          ))}
+        </div>
+      </section>
+
+      {/* Category Exploration */}
+      <section className="container home-section">
+        <div className="section-heading">
+          <div>
+            <h2>Explore by Category</h2>
+            <p>Delve into specific realms of knowledge and imagination.</p>
+          </div>
+        </div>
+
+        <div className="category-grid">
+          {categories.map((category) => (
+            <button
+              key={category}
+              className="category-card"
+              onClick={() => handleCategoryClick(category)}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export default Home;

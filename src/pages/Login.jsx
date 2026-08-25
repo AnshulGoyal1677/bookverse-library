@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import './Auth.css';
 
-function Login({ onSwitch, onLoginSuccess }) {
+function Login({ setCurrentUser }) {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -22,13 +26,11 @@ function Login({ onSwitch, onLoginSuccess }) {
     e.preventDefault();
 
     if (!formData.email.trim() || !formData.password) {
-      alert('Error: Please fill in both email and password.');
       setError('Please fill in both email and password.');
       return;
     }
 
     if (!validateEmail(formData.email)) {
-      alert('Error: Please enter a valid email format.');
       setError('Please enter a valid email address.');
       return;
     }
@@ -39,17 +41,15 @@ function Login({ onSwitch, onLoginSuccess }) {
     );
 
     if (!matchedUser) {
-      alert('Error: Invalid email or password.');
       setError('Invalid email or password.');
       return;
     }
 
-    localStorage.setItem('bookverse_session', JSON.stringify({ name: matchedUser.name, email: matchedUser.email }));
-    alert(`Welcome back, ${matchedUser.name}! Login successful.`);
-    
-    if (onLoginSuccess) {
-      onLoginSuccess(matchedUser);
-    }
+    const session = { name: matchedUser.name, email: matchedUser.email };
+    localStorage.setItem('bookverse_session', JSON.stringify(session));
+
+    setCurrentUser(session);
+    navigate('/profile');
   };
 
   return (
@@ -83,22 +83,13 @@ function Login({ onSwitch, onLoginSuccess }) {
             />
           </div>
 
-          <button type="submit" className="auth-btn">
+          <button type="submit" className="btn btn-primary">
             Log In
           </button>
         </form>
 
         <p className="auth-switch">
-          Don't have an account?{' '}
-          <a
-            href="#signup"
-            onClick={(e) => {
-              e.preventDefault();
-              onSwitch('signup');
-            }}
-          >
-            Sign Up
-          </a>
+          Don't have an account? <Link to="/signup">Sign Up</Link>
         </p>
       </div>
     </div>
