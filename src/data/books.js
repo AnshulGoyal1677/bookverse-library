@@ -15,7 +15,7 @@ export const books = [
     description:
       "A classic story of wealth, love and the American Dream, set in the Jazz Age of 1920s New York.",
     coverImage:
-      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80",
+      "https://m.media-amazon.com/images/I/81TLiZrasVL._UF1000,1000_QL80_.jpg",
   },
   {
     id: 2,
@@ -27,7 +27,7 @@ export const books = [
     description:
       "A powerful coming-of-age story exploring racial injustice in the American South through the eyes of a young girl.",
     coverImage:
-      "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&q=80",
+      "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1612238791i/56916837.jpg",
   },
   {
     id: 3,
@@ -39,7 +39,7 @@ export const books = [
     description:
       "A practical guide to building good habits and breaking bad ones, using small, consistent changes.",
     coverImage:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTDQ2y_83l-be_WRSYyV8ZQC-VKEGt8EMVE00dTvkgLFtn5SyKNvN6XGln&s=10",
   },
   {
     id: 4,
@@ -51,7 +51,7 @@ export const books = [
     description:
       "A sweeping look at how Homo sapiens came to dominate the world, from the Stone Age to the present.",
     coverImage:
-      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7d6gDdh2-PsaxRnh4WPW157ZvZk-thwEFHn28nctluObbYpWH4q3EQwo&s=10",
   },
   {
     id: 5,
@@ -63,7 +63,7 @@ export const books = [
     description:
       "A guide to writing readable, maintainable software, with practical principles every developer should know.",
     coverImage:
-      "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&q=80",
+      "https://m.media-amazon.com/images/I/71T7aD3EOTL._UF1000,1000_QL80_.jpg",
   },
   {
     id: 6,
@@ -75,6 +75,6 @@ export const books = [
     description:
       "The tale of Bilbo Baggins, a hobbit who joins a quest to reclaim a treasure guarded by a dragon.",
     coverImage:
-      "https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=400&q=80",
+      "https://m.media-amazon.com/images/I/712cDO7d73L._AC_UF1000,1000_QL80_.jpg",
   },
 ];
