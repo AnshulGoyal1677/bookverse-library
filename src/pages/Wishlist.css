@@ -1,0 +1,16 @@
+.wishlist-page {
+  padding: 40px 24px 64px;
+}
+
+.wishlist-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.wishlist-header p {
+  margin: 0;
+}
+
+.empty-state .btn {
+  margin-top: 12px;
+}

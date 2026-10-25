@@ -1,65 +1,66 @@
-import { useParams, Link } from "react-router-dom";
-import { booksData } from "../data/booksData";
+import { useContext } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { getAllBooks } from "../utils/bookManagement";
+import { ToastContext } from "../context/ToastContext";
 import WishlistButton from "../components/WishlistButton";
+import DeleteBookButton from "../components/DeleteBookButton";
+import "./BookDetails.css";
 
-export default function BookDetails() {
-  // 1. Get the dynamic book id from the URL parameter (/books/:id)
+function BookDetails() {
+  const { showToast } = useContext(ToastContext);
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  // 2. Find the book in booksData matching this ID
-  const book = booksData.find((item) => item.id === Number(id));
+  // Route params are always strings, so convert to a number to match book.id
+  const bookId = Number(id);
+  const allBooks = getAllBooks();
+  const book = allBooks.find((b) => b.id === bookId);
 
-  // 3. Render fallback if ID is not found in booksData
   if (!book) {
     return (
-      <div style={{ textAlign: "center", padding: "40px 20px" }}>
-        <h2>Book Not Found</h2>
-        <p style={{ color: "#6b7280" }}>No book found with ID: {id}</p>
-        <Link to="/" style={{ color: "#2563eb" }}>← Return to Home</Link>
+      <div className="container book-details-page">
+        <p>Sorry, we couldn't find that book.</p>
+        <Link to="/catalogue" className="btn btn-outline">
+          Back to Catalogue
+        </Link>
       </div>
     );
   }
 
-  // 4. Render details using the exact properties from booksData
+  const handleDeleted = () => {
+    showToast("Book deleted successfully.", "success");
+    navigate("/catalogue");
+  };
+
   return (
-    <div style={{ maxWidth: "800px", margin: "30px auto", padding: "0 20px" }}>
-      <Link to="/" style={{ textDecoration: "none", color: "#4b5563" }}>
+    <div className="container book-details-page">
+      <Link to="/catalogue" className="back-link">
         ← Back to Catalogue
       </Link>
 
-      <div style={{ 
-        border: "1px solid #e5e7eb", 
-        borderRadius: "8px", 
-        padding: "24px", 
-        marginTop: "16px",
-        backgroundColor: "#ffffff"
-      }}>
-        <span style={{ 
-          backgroundColor: "#e0f2fe", 
-          color: "#0369a1", 
-          padding: "4px 8px", 
-          borderRadius: "4px", 
-          fontSize: "12px",
-          fontWeight: "bold"
-        }}>
-          {book.category}
-        </span>
+      <div className="book-details-card">
+        <img src={book.coverImage} alt={book.title} className="book-details-image" />
 
-        <h1 style={{ margin: "12px 0 6px", fontSize: "26px" }}>{book.title}</h1>
-        <p style={{ margin: "0 0 16px", color: "#4b5563" }}>by <strong>{book.author}</strong></p>
+        <div className="book-details-info">
+          <span className="book-card-category">{book.category}</span>
+          <h1>{book.title}</h1>
+          <p className="book-details-author">by {book.author}</p>
 
-        <p style={{ fontSize: "14px", color: "#9ca3af" }}>Book ID: #{book.id}</p>
+          <div className="book-details-meta">
+            <span className="book-card-rating">⭐ {book.rating}</span>
+            <span className="book-card-price">${book.price.toFixed(2)}</span>
+          </div>
 
-        <div style={{ margin: "20px 0", borderTop: "1px solid #f3f4f6", paddingTop: "16px" }}>
-          <h3 style={{ fontSize: "16px", marginBottom: "8px" }}>Synopsis</h3>
-          <p style={{ color: "#374151", lineHeight: "1.5" }}>{book.description}</p>
-        </div>
+          <p className="book-details-description">{book.description}</p>
 
-        {/* WishlistButton component integration */}
-        <div style={{ marginTop: "20px" }}>
-          <WishlistButton book={book} />
+          <div className="book-details-actions">
+            <WishlistButton bookId={book.id} />
+            <DeleteBookButton book={book} onDeleted={handleDeleted} />
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+export default BookDetails;

@@ -1,42 +1,45 @@
-import { deleteCustomBook } from "../utils/bookManagement";
+import { useState } from "react";
+import { deleteBook } from "../utils/bookManagement";
+import "./DeleteBookButton.css";
 
-export default function DeleteBookButton({ bookId, onDelete }) {
-  const handleDelete = (e) => {
-    e.stopPropagation();
+function DeleteBookButton({ book, onDeleted }) {
+  // true while the "Are you sure?" box is open
+  const [showConfirm, setShowConfirm] = useState(false);
 
-    const confirmed = window.confirm(
-      "Are you sure you want to remove this book from your collection?"
-    );
+  const handleConfirmDelete = () => {
+    deleteBook(book);
+    setShowConfirm(false);
 
-    if (confirmed) {
-      deleteCustomBook(bookId);
-      if (onDelete) {
-        onDelete(bookId);
-      }
+    if (onDeleted) {
+      onDeleted(book.id);
     }
   };
 
   return (
-    <button
-      onClick={handleDelete}
-      className="delete-book-btn"
-      style={{
-        padding: "6px 12px",
-        borderRadius: "6px",
-        border: "1px solid #fca5a5",
-        backgroundColor: "#fef2f2",
-        color: "#b91c1c",
-        fontSize: "13px",
-        fontWeight: "500",
-        cursor: "pointer",
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "4px",
-        transition: "all 0.2s ease"
-      }}
-    >
-      <span>🗑</span>
-      <span>Delete</span>
-    </button>
+    <>
+      <button className="btn btn-danger" onClick={() => setShowConfirm(true)}>
+        Delete Book
+      </button>
+
+      {showConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>Delete this book?</h3>
+            <p>This book will be removed from the catalogue. This cannot be undone.</p>
+
+            <div className="modal-actions">
+              <button className="btn btn-outline" onClick={() => setShowConfirm(false)}>
+                Cancel
+              </button>
+              <button className="btn btn-danger" onClick={handleConfirmDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
+
+export default DeleteBookButton;

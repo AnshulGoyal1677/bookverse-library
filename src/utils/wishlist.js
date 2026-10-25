@@ -1,42 +1,42 @@
-const KEY = "bookverse_wishlist";
+// src/utils/wishlist.js
+// Small helper functions for saving wishlist book IDs in localStorage.
+// The wishlist is just an array of book IDs, e.g. [1, 3, 5]
+//
+// Each logged-in user gets their own wishlist, saved under a key that
+// includes their email. Visitors who are not logged in use the plain key.
 
-// 1. Get all saved wishlist books from localStorage
+const WISHLIST_KEY = "bookverse_wishlist";
+
+function getWishlistKey() {
+  const savedSession = localStorage.getItem("bookverse_session");
+
+  if (savedSession) {
+    const user = JSON.parse(savedSession);
+    return WISHLIST_KEY + "_" + user.email;
+  }
+
+  return WISHLIST_KEY;
+}
+
 export function getWishlist() {
-  const data = localStorage.getItem(KEY);
-  if (data) {
-    return JSON.parse(data);
-  }
-  return [];
+  const saved = localStorage.getItem(getWishlistKey());
+  return saved ? JSON.parse(saved) : [];
 }
 
-// 2. Check if a book ID is already inside the wishlist
 export function isInWishlist(bookId) {
-  const list = getWishlist();
-  return list.some((item) => item.id === Number(bookId));
+  const wishlist = getWishlist();
+  return wishlist.includes(bookId);
 }
 
-// 3. Add a new book to the wishlist
-export function addToWishlist(book) {
-  const list = getWishlist();
-  
-  // Check if book already exists to avoid duplicates
-  const alreadyAdded = list.some((item) => item.id === book.id);
-  if (!alreadyAdded) {
-    const updatedList = [book, ...list];
-    localStorage.setItem(KEY, JSON.stringify(updatedList));
-    return updatedList;
+export function addToWishlist(bookId) {
+  const wishlist = getWishlist();
+  if (!wishlist.includes(bookId)) {
+    wishlist.push(bookId);
+    localStorage.setItem(getWishlistKey(), JSON.stringify(wishlist));
   }
-  
-  return list;
 }
 
-// 4. Remove a book from the wishlist by ID
 export function removeFromWishlist(bookId) {
-  const list = getWishlist();
-  
-  // Keep all books except the one with the matching ID
-  const updatedList = list.filter((item) => item.id !== Number(bookId));
-  localStorage.setItem(KEY, JSON.stringify(updatedList));
-  
-  return updatedList;
+  const wishlist = getWishlist().filter((id) => id !== bookId);
+  localStorage.setItem(getWishlistKey(), JSON.stringify(wishlist));
 }

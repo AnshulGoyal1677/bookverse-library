@@ -1,272 +1,195 @@
-import { useState } from "react";
-import { addCustomBook } from "../utils/bookManagement";
+import { useState, useContext } from "react";
+import FormInput from "../components/FormInput";
+import { ToastContext } from "../context/ToastContext";
+import { addUserBook } from "../utils/bookManagement";
+import "./AddBook.css";
 
-export default function AddBook() {
-  const [formData, setFormData] = useState({
-    title: "",
-    author: "",
-    category: "Fiction",
-    description: ""
-  });
+// The form starts (and is reset to) this empty state.
+const emptyForm = {
+  title: "",
+  author: "",
+  category: "",
+  description: "",
+  price: "",
+  rating: "",
+  coverImage: "",
+};
 
-  const [error, setError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
+function AddBook({ currentUser }) {
+  const { showToast } = useContext(ToastContext);
+  const [formData, setFormData] = useState(emptyForm);
+
+  // errors looks like { title: "Title is required.", price: "..." }
+  // A field with no problem simply has no entry.
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+    // Clear the old error for the field the user is now fixing.
+    setErrors((prev) => ({ ...prev, [id]: "" }));
+  };
+
+  // Checks every field and returns an object of error messages.
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (formData.title.trim() === "") {
+      newErrors.title = "Title is required.";
+    }
+
+    if (formData.author.trim() === "") {
+      newErrors.author = "Author is required.";
+    }
+
+    if (formData.category.trim() === "") {
+      newErrors.category = "Category is required.";
+    }
+
+    // Number inputs still give us text, so we convert with Number().
+    const priceText = formData.price.trim();
+    if (priceText === "") {
+      newErrors.price = "Price is required.";
+    } else if (isNaN(Number(priceText))) {
+      newErrors.price = "Price must be a number.";
+    } else if (Number(priceText) < 0) {
+      newErrors.price = "Price cannot be negative.";
+    }
+
+    const ratingText = formData.rating.trim();
+    if (ratingText === "") {
+      newErrors.rating = "Rating is required.";
+    } else if (isNaN(Number(ratingText))) {
+      newErrors.rating = "Rating must be a number.";
+    } else if (Number(ratingText) < 0 || Number(ratingText) > 5) {
+      newErrors.rating = "Rating must be between 0 and 5.";
+    }
+
+    // The cover image is optional, but if it is typed it should be a web link.
+    const coverText = formData.coverImage.trim();
+    if (coverText !== "" && !coverText.startsWith("http")) {
+      newErrors.coverImage = "Cover image must be a link starting with http.";
+    }
+
+    return newErrors;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.title.trim() || !formData.author.trim()) {
-      setError("Please fill in both the Title and Author fields.");
+    const newErrors = validateForm();
+
+    // Object.keys(...).length is the number of fields with a problem.
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      showToast("Please fix the highlighted fields.", "error");
       return;
     }
 
-    setError("");
-
-    addCustomBook({
+    addUserBook({
       title: formData.title.trim(),
       author: formData.author.trim(),
-      category: formData.category,
-      description: formData.description.trim() || "No description provided."
+      category: formData.category.trim(),
+      description: formData.description.trim() || "No description provided.",
+      price: Number(formData.price),
+      rating: Number(formData.rating),
+      coverImage:
+        formData.coverImage.trim() ||
+        "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&q=80",
+      addedBy: currentUser.email, // remembers who added the book
     });
 
-    setIsSuccess(true);
-
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 1200);
+    setFormData(emptyForm);
+    setErrors({});
+    showToast("Book added successfully!", "success");
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "40px auto", padding: "0 20px" }}>
-      
-      <a
-        href="/"
-        style={{
-          display: "inline-block",
-          marginBottom: "20px",
-          color: "#4b5563",
-          textDecoration: "none",
-          fontWeight: "500"
-        }}
-      >
-        ← Back to Catalogue
-      </a>
+    <div className="container add-book-page">
+      <div className="add-book-card">
+        <h1>Add a Book</h1>
+        <p>Add a new book to the BookVerse catalogue.</p>
 
-      <div
-        style={{
-          backgroundColor: "#ffffff",
-          padding: "32px",
-          borderRadius: "12px",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          border: "1px solid #e5e7eb"
-        }}
-      >
-        <h1 style={{ fontSize: "24px", color: "#111827", marginBottom: "8px" }}>
-          Add a New Book
-        </h1>
+        {/* noValidate turns off the browser's own pop-ups so our messages are used */}
+        <form className="add-book-form" onSubmit={handleSubmit} noValidate>
+          <FormInput
+            id="title"
+            label="Title"
+            type="text"
+            value={formData.title}
+            onChange={handleChange}
+            error={errors.title}
+          />
 
-        <p style={{ color: "#6b7280", fontSize: "14px", marginBottom: "24px" }}>
-          Add a custom book to your personal collection.
-        </p>
+          <FormInput
+            id="author"
+            label="Author"
+            type="text"
+            value={formData.author}
+            onChange={handleChange}
+            error={errors.author}
+          />
 
-        {error && (
-          <div
-            style={{
-              padding: "12px",
-              backgroundColor: "#fee2e2",
-              color: "#b91c1c",
-              borderRadius: "6px",
-              marginBottom: "16px",
-              fontSize: "14px"
-            }}
-          >
-            {error}
-          </div>
-        )}
+          <FormInput
+            id="category"
+            label="Category"
+            type="text"
+            value={formData.category}
+            onChange={handleChange}
+            error={errors.category}
+          />
 
-        {isSuccess && (
-          <div
-            style={{
-              padding: "12px",
-              backgroundColor: "#dcfce7",
-              color: "#15803d",
-              borderRadius: "6px",
-              marginBottom: "16px",
-              fontSize: "14px"
-            }}
-          >
-            Book added successfully! Redirecting...
-          </div>
-        )}
-
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "16px"
-          }}
-        >
-          <div>
-            <label
-              htmlFor="title"
-              style={{
-                display: "block",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#374151",
-                marginBottom: "6px"
-              }}
-            >
-              Book Title *
-            </label>
-
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              placeholder="e.g. Clean Code"
-              style={{
-                width: "100%",
-                padding: "10px 12px",
-                border: "1px solid #d1d5db",
-                borderRadius: "6px",
-                fontSize: "14px",
-                boxSizing: "border-box"
-              }}
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="author"
-              style={{
-                display: "block",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#374151",
-                marginBottom: "6px"
-              }}
-            >
-              Author *
-            </label>
-
-            <input
-              type="text"
-              id="author"
-              name="author"
-              value={formData.author}
-              onChange={handleChange}
-              placeholder="e.g. Robert C. Martin"
-              style={{
-                width: "100%",
-                padding: "10px 12px",
-                border: "1px solid #d1d5db",
-                borderRadius: "6px",
-                fontSize: "14px",
-                boxSizing: "border-box"
-              }}
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="category"
-              style={{
-                display: "block",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#374151",
-                marginBottom: "6px"
-              }}
-            >
-              Category
-            </label>
-
-            <select
-              id="category"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              style={{
-                width: "100%",
-                padding: "10px 12px",
-                border: "1px solid #d1d5db",
-                borderRadius: "6px",
-                fontSize: "14px",
-                backgroundColor: "#ffffff",
-                boxSizing: "border-box"
-              }}
-            >
-              <option value="Fiction">Fiction</option>
-              <option value="Science">Science</option>
-              <option value="Poetry">Poetry</option>
-              <option value="History">History</option>
-              <option value="Technology">Technology</option>
-              <option value="Philosophy">Philosophy</option>
-            </select>
-          </div>
-
-          <div>
-            <label
-              htmlFor="description"
-              style={{
-                display: "block",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#374151",
-                marginBottom: "6px"
-              }}
-            >
-              Description / Synopsis
-            </label>
-
+          <div className="form-group">
+            <label htmlFor="description">Description (optional)</label>
             <textarea
               id="description"
-              name="description"
+              rows="3"
               value={formData.description}
               onChange={handleChange}
-              rows="4"
-              placeholder="Brief summary of the book..."
-              style={{
-                width: "100%",
-                padding: "10px 12px",
-                border: "1px solid #d1d5db",
-                borderRadius: "6px",
-                fontSize: "14px",
-                boxSizing: "border-box",
-                resize: "vertical"
-              }}
             />
           </div>
 
-          <button
-            type="submit"
-            style={{
-              padding: "12px",
-              backgroundColor: "#2563eb",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "6px",
-              fontWeight: "600",
-              cursor: "pointer",
-              marginTop: "8px"
-            }}
-          >
-            Save Book
+          <div className="form-row">
+            <FormInput
+              id="price"
+              label="Price ($)"
+              type="number"
+              step="0.01"
+              min="0"
+              value={formData.price}
+              onChange={handleChange}
+              error={errors.price}
+            />
+
+            <FormInput
+              id="rating"
+              label="Rating (out of 5)"
+              type="number"
+              step="0.1"
+              min="0"
+              max="5"
+              value={formData.rating}
+              onChange={handleChange}
+              error={errors.rating}
+            />
+          </div>
+
+          <FormInput
+            id="coverImage"
+            label="Cover Image URL (optional)"
+            type="text"
+            value={formData.coverImage}
+            onChange={handleChange}
+            error={errors.coverImage}
+          />
+
+          <button type="submit" className="btn btn-primary">
+            Add Book
           </button>
         </form>
       </div>
     </div>
   );
 }
+
+export default AddBook;

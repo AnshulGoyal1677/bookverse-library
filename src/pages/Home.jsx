@@ -1,90 +1,91 @@
-{/* Genre Exploration (Category Section) */}
-<section style={{ maxWidth: "1280px", margin: "0 auto", padding: "48px 24px" }}>
-    <div style={{ marginBottom: "32px", textAlign: "left" }}>
-        <h2 style={{ fontSize: "28px", fontWeight: "bold", color: "#030612", margin: "0 0 6px" }}>
-            Explore by Category
-        </h2>
-        <p style={{ color: "#45464c", margin: 0, fontSize: "16px" }}>
-            Delve into specific realms of knowledge and imagination.
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { getAllBooks } from '../utils/bookManagement';
+import BookCard from '../components/BookCard';
+import './Home.css';
+
+const categories = ['Fiction', 'History', 'Self-Help', 'Technology', 'Fantasy'];
+
+function Home() {
+  const navigate = useNavigate();
+  const [heroSearch, setHeroSearch] = useState('');
+
+  const newArrivals = getAllBooks().slice(0, 4);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    navigate(`/catalogue?search=${encodeURIComponent(heroSearch)}`);
+  };
+
+  const handleCategoryClick = (category) => {
+    navigate(`/catalogue?category=${encodeURIComponent(category)}`);
+  };
+
+  return (
+    <div>
+      {/* Hero Section */}
+      <section className="hero container">
+        <h1>Your journey through a thousand verses begins here.</h1>
+        <p>
+          Discover a curated sanctuary of literature. Search for your next great read
+          in our digital library.
         </p>
+
+        <form className="hero-search" onSubmit={handleSearchSubmit}>
+          <input
+            type="text"
+            placeholder="Search by title, author, or keyword..."
+            value={heroSearch}
+            onChange={(e) => setHeroSearch(e.target.value)}
+          />
+          <button type="submit" className="btn btn-primary">
+            Search
+          </button>
+        </form>
+      </section>
+
+      {/* New Arrivals */}
+      <section className="container home-section">
+        <div className="section-heading">
+          <div>
+            <h2>New Arrivals</h2>
+            <p>The latest additions to our curated shelves.</p>
+          </div>
+          <Link to="/catalogue" className="view-all-link">
+            View all →
+          </Link>
+        </div>
+
+        <div className="book-grid">
+          {newArrivals.map((book) => (
+            <BookCard key={book.id} book={book} />
+          ))}
+        </div>
+      </section>
+
+      {/* Category Exploration */}
+      <section className="container home-section">
+        <div className="section-heading">
+          <div>
+            <h2>Explore by Category</h2>
+            <p>Delve into specific realms of knowledge and imagination.</p>
+          </div>
+        </div>
+
+        <div className="category-grid">
+          {categories.map((category) => (
+            <button
+              key={category}
+              className="category-card"
+              onClick={() => handleCategoryClick(category)}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </section>
     </div>
+  );
+}
 
-    {/* Responsive Category Grid */}
-    <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-        gap: "24px"
-    }}>
-        {/* Fiction Card */}
-        <div style={{
-            backgroundColor: "#1a1f2c",
-            color: "#ffffff",
-            padding: "24px",
-            borderRadius: "16px",
-            minHeight: "160px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            boxShadow: "0 4px 6px rgba(0,0,0,0.05)"
-        }}>
-            <h3 style={{ margin: "0 0 6px", fontSize: "22px" }}>Fiction</h3>
-            <p style={{ margin: 0, fontSize: "14px", opacity: 0.85 }}>
-                Novels, short stories, and tales of imagination.
-            </p>
-        </div>
-
-        {/* Non-Fiction Card */}
-        <div style={{
-            backgroundColor: "#7d562d",
-            color: "#ffffff",
-            padding: "24px",
-            borderRadius: "16px",
-            minHeight: "160px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            boxShadow: "0 4px 6px rgba(0,0,0,0.05)"
-        }}>
-            <h3 style={{ margin: "0 0 6px", fontSize: "22px" }}>Non-Fiction</h3>
-            <p style={{ margin: 0, fontSize: "14px", opacity: 0.85 }}>
-                Real-world insights, philosophies, and essays.
-            </p>
-        </div>
-
-        {/* Poetry Card */}
-        <div style={{
-            backgroundColor: "#45464c",
-            color: "#ffffff",
-            padding: "24px",
-            borderRadius: "16px",
-            minHeight: "160px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            boxShadow: "0 4px 6px rgba(0,0,0,0.05)"
-        }}>
-            <h3 style={{ margin: "0 0 6px", fontSize: "22px" }}>Poetry</h3>
-            <p style={{ margin: 0, fontSize: "14px", opacity: 0.85 }}>
-                Verses, rhymes, and lyrical compositions.
-            </p>
-        </div>
-
-        {/* History Card */}
-        <div style={{
-            backgroundColor: "#eceef2",
-            color: "#030612",
-            padding: "24px",
-            borderRadius: "16px",
-            minHeight: "160px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            boxShadow: "0 4px 6px rgba(0,0,0,0.05)"
-        }}>
-            <h3 style={{ margin: "0 0 6px", fontSize: "22px" }}>History</h3>
-            <p style={{ margin: 0, fontSize: "14px", color: "#45464c" }}>
-                Chronicles of the past, biographies, and historical events.
-            </p>
-        </div>
-    </div>
-</section>
+export default Home;
