@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
 import { getAllBooks } from "../utils/bookManagement";
-import { getWishlist } from "../utils/wishlist";
+import { useSelector } from "react-redux";
 import BookGrid from "../components/BookGrid";
 import "./Wishlist.css";
 
 function Wishlist() {
-  // Reading from localStorage is synchronous, so we can compute the
-  // wishlist books directly here instead of using useEffect.
   const allBooks = getAllBooks();
-  const savedIds = getWishlist();
+
+  // The wishlist ids come from the Redux store, so this page redraws
+  // by itself whenever the wishlist changes.
+  const savedIds = useSelector((state) => state.wishlist.ids);
   const wishlistBooks = allBooks.filter((book) => savedIds.includes(book.id));
 
   return (
